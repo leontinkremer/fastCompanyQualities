@@ -1,33 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import EditForm from "../components/ui/editForm";
-// editQuality.jsx
-import httpService from "../services/http.service";
-import configData from "../services/configData.json";
+import qualityService from "../services/quality.service";
 
 const EditQualityPage = () => {
   const [quality, setQuality] = useState(null);
+  // const [errors, setErrors] = useState(null);
   const id = useParams().id;
-  const qualityEndpoint = configData.SERVER_URL + `quality/${id}`;
+
+  const updateQuality = async (content) => {
+    try {
+      const data = await qualityService.update(id, content);
+      return data.content;
+    } catch (error) {
+      console.log("errorski", error);
+      // const { message } = error.response.data;
+      // setErrors({ message, code });
+    }
+  };
 
   const getQuality = async (id) => {
     try {
-      const { data } = await httpService.get(qualityEndpoint);
-      return data;
+      const data = await qualityService.get(id);
+      // console.log("data", data);
+      return data.content;
     } catch (error) {
+      const { message } = error.response.data;
       console.log("Expected Error");
     }
   };
 
-  const updateQuality = async (data) => {
-    try {
-      const data = await httpService.put(qualityEndpoint, data);
-      return data;
-    } catch (error) {}
-  };
-
   useEffect(() => {
-    getQuality(id).then((data) => data && setQuality(data.content));
+    getQuality(id).then((data) => setQuality(data));
   }, []);
   // Verwende die get-Methode deines http-Services um eine Request zu machen und anschließend diese Daten zu verarbeiten.
   const handleSubmit = (data) => {

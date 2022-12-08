@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import QualitiesTable from "../components/ui/qualitiesTable";
 import axios from "axios";
+import qualityService from "../services/quality.service";
 
 const QualitiesListPage = () => {
   const [qualities, setQualitites] = useState([]);
-
   const history = useHistory();
+
   useEffect(async () => {
-    const { data } = await axios.get("quality");
-    console.log("data", data);
-    data && setQualitites(data.content);
+    qualityService.fetchAll().then((data) => setQualitites(data.content));
   }, []);
 
   const handleEdit = (param) => {
