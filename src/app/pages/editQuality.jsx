@@ -10,20 +10,28 @@ const EditQualityPage = () => {
   const id = useParams().id;
   const qualityEndpoint = configData.SERVER_URL + `quality/${id}`;
 
-  useEffect(async () => {
-    const { data } = await httpService.get(qualityEndpoint);
-
-    data && setQuality(data.content);
-  }, []);
-  // Verwende die get-Methode deines http-Services um eine Request zu machen und anschließend diese Daten zu verarbeiten.
-  const handleSubmit = async (data) => {
+  const getQuality = async (id) => {
     try {
-      await httpService
-        .put(qualityEndpoint, data)
-        .then((res) => console.log(res.data.content));
+      const { data } = await httpService.get(qualityEndpoint);
+      return data;
     } catch (error) {
       console.log("Expected Error");
     }
+  };
+
+  const updateQuality = async (data) => {
+    try {
+      const data = await httpService.put(qualityEndpoint, data);
+      return data;
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getQuality(id).then((data) => data && setQuality(data.content));
+  }, []);
+  // Verwende die get-Methode deines http-Services um eine Request zu machen und anschließend diese Daten zu verarbeiten.
+  const handleSubmit = (data) => {
+    updateQuality(data);
   };
 
   return (
